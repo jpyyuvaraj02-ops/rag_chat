@@ -1,0 +1,31 @@
+XYZ Engineering College Information
+
+College Timings:
+The college starts at 9:00 AM and ends at 4:00 PM.
+
+Departments:
+Computer Science Engineering (CSE)
+Electronics and Communication Engineering (ECE)
+Mechanical Engineering
+Civil Engineering
+Information Technology (IT)
+
+Library:
+The library is located in Block A on the first floor.
+Library timings are 9:30 AM to 5:00 PM.
+
+Hackathon Event:
+A 24 hour hackathon will be conducted on March 15 in the seminar hall.
+
+Placement Cell:
+The placement cell is located in Block C.
+Placement training sessions are conducted every Friday.
+
+Canteen:
+The canteen is located near the main ground.
+
+WiFi:
+Free campus wifi is available for all students.
+
+Contact:
+For student support contact studentaffairs@xyzcollege.com
