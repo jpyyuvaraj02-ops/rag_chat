@@ -109,9 +109,8 @@ if prompt:
     # -----------------------------
     # Retrieve context (RAG)
     # -----------------------------
-    docs = retriever.invoke(prompt)[:3]
-
-    context = "\n\n".join([doc.page_content for doc in docs])
+    docs = retriever.get_relevant_documents(prompt)
+    context = "\n\n".join([d.page_content for d in docs[:3]])
 
     full_prompt = f"""
 You are a helpful campus assistant for XYZ Engineering College.
