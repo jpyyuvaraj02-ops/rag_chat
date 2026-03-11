@@ -91,7 +91,7 @@ if prompt:
     with st.chat_message("user"):
         st.write(prompt)
 
-    docs = retriever.get_relevant_documents(prompt)
+    docs = retriever.invoke(prompt)
     context = "\n\n".join([d.page_content for d in docs[:3]])
 
     full_prompt = f"""
