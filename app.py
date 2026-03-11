@@ -63,8 +63,7 @@ def load_vectorstore():
     return db.as_retriever()
     
 
-db = load_vectorstore()
-retriever = db.as_retriever()
+retriever = load_vectorstore()
 
 # -----------------------------
 # Chat history
