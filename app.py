@@ -3,6 +3,7 @@ import streamlit as st
 from dotenv import load_dotenv
 
 from langchain_community.document_loaders import TextLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import CharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -21,6 +22,12 @@ st.set_page_config(page_title="Campus AI", page_icon="🤖")
 st.title("🎓 XYZ Campus AI Assistant")
 st.sidebar.title("About")
 st.sidebar.write("Ask questions about campus facilities, events, and services.")
+uploaded_file = st.file_uploader("Upload College PDF", type="pdf")
+
+if uploaded_file:
+    with open("college.pdf", "wb") as f:
+        f.write(uploaded_file.read())
+    st.success("PDF uploaded successfully")
 
 st.sidebar.title("Example Questions")
 st.sidebar.write("• Where is the library?")
@@ -33,8 +40,29 @@ st.sidebar.write("• Where is the placement cell?")
 @st.cache_resource
 def load_vectorstore():
 
-    loader = TextLoader("data.txt")
-    documents = loader.load()
+    documents = []
+
+    # Load text file
+    text_loader = TextLoader("data.txt")
+    documents.extend(text_loader.load())
+
+    # Load PDF if available
+    if os.path.exists("college.pdf"):
+        pdf_loader = PyPDFLoader("college.pdf")
+        documents.extend(pdf_loader.load())
+
+    splitter = CharacterTextSplitter(
+        chunk_size=300,
+        chunk_overlap=50
+    )
+
+    docs = splitter.split_documents(documents)
+
+    embeddings = HuggingFaceEmbeddings()
+
+    db = FAISS.from_documents(docs, embeddings)
+
+    return db
 
     splitter = CharacterTextSplitter(
         chunk_size=300,
@@ -100,23 +128,30 @@ Question:
 
 Give a short and clear answer.
 """
+# ---------------------------
+# LLM call
+# ---------------------------
 
-    # -----------------------------
-    # LLM call
-    # -----------------------------
-    chat = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
-        messages=[{"role": "user", "content": full_prompt}]
-    )
+messages = []
 
-    answer = chat.choices[0].message.content
+for m in st.session_state.messages:
+    messages.append({"role": m["role"], "content": m["content"]})
+
+messages.append({"role": "user", "content": full_prompt})
+
+chat = client.chat.completions.create(
+    model="llama-3.1-8b-instant",
+    messages=messages
+)
+
+answer = chat.choices[0].message.content
 
     # Store answer
-    st.session_state.messages.append({
+st.session_state.messages.append({
         "role": "assistant",
         "content": answer
     })
 
     # Show assistant message
-    with st.chat_message("assistant"):
+with st.chat_message("assistant"):
         st.write(answer)
