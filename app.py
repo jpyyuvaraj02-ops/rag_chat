@@ -42,11 +42,9 @@ def load_vectorstore():
 
     documents = []
 
-    # Load text file
     text_loader = TextLoader("data.txt")
     documents.extend(text_loader.load())
 
-    # Load PDF if available
     if os.path.exists("college.pdf"):
         pdf_loader = PyPDFLoader("college.pdf")
         documents.extend(pdf_loader.load())
@@ -62,20 +60,8 @@ def load_vectorstore():
 
     db = FAISS.from_documents(docs, embeddings)
 
-    return db
-
-    splitter = CharacterTextSplitter(
-        chunk_size=300,
-        chunk_overlap=50
-    )
-
-    docs = splitter.split_documents(documents)
-
-    embeddings = HuggingFaceEmbeddings()
-
-    db = FAISS.from_documents(docs, embeddings)
-
     return db.as_retriever()
+    
 
 retriever = load_vectorstore()
 
@@ -97,7 +83,6 @@ prompt = st.chat_input("Ask something about campus")
 
 if prompt:
 
-    # Show user message
     st.session_state.messages.append({
         "role": "user",
         "content": prompt
@@ -106,18 +91,11 @@ if prompt:
     with st.chat_message("user"):
         st.write(prompt)
 
-    # -----------------------------
-    # Retrieve context (RAG)
-    # -----------------------------
     docs = retriever.get_relevant_documents(prompt)
     context = "\n\n".join([d.page_content for d in docs[:3]])
 
     full_prompt = f"""
 You are a helpful campus assistant for XYZ Engineering College.
-
-Answer only using the provided context.
-If the answer is not in the context, say:
-"I do not have information about that."
 
 Context:
 {context}
@@ -127,30 +105,25 @@ Question:
 
 Give a short and clear answer.
 """
-# ---------------------------
-# LLM call
-# ---------------------------
 
-messages = []
+    messages = []
 
-for m in st.session_state.messages:
-    messages.append({"role": m["role"], "content": m["content"]})
+    for m in st.session_state.messages:
+        messages.append({"role": m["role"], "content": m["content"]})
 
-messages.append({"role": "user", "content": full_prompt})
+    messages.append({"role": "user", "content": full_prompt})
 
-chat = client.chat.completions.create(
-    model="llama-3.1-8b-instant",
-    messages=messages
-)
+    chat = client.chat.completions.create(
+        model="llama-3.1-8b-instant",
+        messages=messages
+    )
 
-answer = chat.choices[0].message.content
+    answer = chat.choices[0].message.content
 
-    # Store answer
-st.session_state.messages.append({
+    st.session_state.messages.append({
         "role": "assistant",
         "content": answer
     })
 
-    # Show assistant message
-with st.chat_message("assistant"):
+    with st.chat_message("assistant"):
         st.write(answer)
