@@ -27,5 +27,15 @@ The canteen is located near the main ground.
 WiFi:
 Free campus wifi is available for all students.
 
+Hostel:
+The boys hostel is located behind Block D.
+The girls hostel is located near the sports ground.
+
+Sports:
+The campus has a football ground, basketball court, and indoor stadium.
+
+Auditorium:
+A central auditorium with seating capacity of 1000 is available for events.
+
 Contact:
 For student support contact studentaffairs@xyzcollege.com

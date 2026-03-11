@@ -18,8 +18,15 @@ client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 # Streamlit page setup
 st.set_page_config(page_title="Campus AI", page_icon="🤖")
 
-st.title("🎓 Campus Assistant Chatbot")
+st.title("🎓 XYZ Campus AI Assistant")
+st.sidebar.title("About")
+st.sidebar.write("Ask questions about campus facilities, events, and services.")
 
+st.sidebar.title("Example Questions")
+st.sidebar.write("• Where is the library?")
+st.sidebar.write("• When is the hackathon?")
+st.sidebar.write("• What departments are available?")
+st.sidebar.write("• Where is the placement cell?")
 # -----------------------------
 # Load and cache vector database
 # -----------------------------
@@ -74,14 +81,16 @@ if prompt:
     # -----------------------------
     # Retrieve context (RAG)
     # -----------------------------
-    docs = retriever.invoke(prompt)
+    docs = retriever.invoke(prompt)[:3]
 
     context = "\n\n".join([doc.page_content for doc in docs])
 
     full_prompt = f"""
-You are a helpful campus assistant.
+You are a helpful campus assistant for XYZ Engineering College.
 
 Answer only using the provided context.
+If the answer is not in the context, say:
+"I do not have information about that."
 
 Context:
 {context}
@@ -89,7 +98,7 @@ Context:
 Question:
 {prompt}
 
-Answer clearly.
+Give a short and clear answer.
 """
 
     # -----------------------------
